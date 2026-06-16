@@ -69,12 +69,14 @@ app.onError((err, c) => {
 // Start server
 // =====================================================================
 const port = parseInt(process.env.PORT || '3000');
+const hostname = process.env.HOSTNAME || '0.0.0.0';
 
 serve({
   fetch: app.fetch,
   port,
+  hostname,
 }, (info) => {
-  console.log(`\n🚀 PRINT OS API running on port ${info.port}`);
+  console.log(`\n🚀 PRINT OS API running on ${info.address}:${info.port}`);
   console.log(`   Health: http://localhost:${info.port}/health`);
   console.log(`   Base:   http://localhost:${info.port}/api/v1`);
   console.log(`   Mode:   ${process.env.NODE_ENV || 'development'}\n`);
