@@ -98,11 +98,10 @@
   </main>
 
   <script>
-    const API = '';  // same origin
-    const SUPABASE_URL = 'https://ddvytkgskhegfjytwpqz.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdnl0a2dza2hlZ2ZqeXR3cHF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMjgzMjMsImV4cCI6MjA2NTcwNDMyM30.AC_hi3oel1Rk-7LbyVcU0mMbADAuC3n4Qf9CikEbJL8';
+  const API = '';  // same origin
+  const SUPABASE_URL = 'https://ddvytkgskhegfjytwpqz.supabase.co';  // for display only — no API call uses anon key
 
-    let session = null;
+  let session = null;
 
     const endpoints = [
       { name: 'Root Info', method: 'GET', path: '/', auth: false },
@@ -164,37 +163,34 @@
       log(`Signing in as ${email}...`, 'request');
 
       try {
-        const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        // Call our API's auth proxy endpoint (uses service_role server-side)
+        const r = await fetch(`${API}/api/v1/auth/signin`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
         });
 
         const data = await r.json();
 
         if (!r.ok) {
-          log(`Sign in failed: ${data.error_description || data.msg || data.message || 'Unknown error'}`, 'error');
+          log(`Sign in failed: ${data.error || data.detail || 'Unknown error'}`, 'error');
           errBox.classList.remove('hidden');
-          errBox.querySelector('div').textContent = data.error_description || data.msg || data.message || 'Sign in failed';
+          errBox.querySelector('div').textContent = data.error || data.detail || 'Sign in failed';
           return;
         }
 
-        session = data;
+        session = { access_token: data.access_token, refresh_token: data.refresh_token, user: data.user };
         log(`✓ Signed in successfully`, 'success');
         log(`User: ${data.user.email}`, 'info');
-        log(`Role: ${data.user.app_metadata?.role}`, 'info');
-        log(`Company: ${data.user.app_metadata?.company_id}`, 'info');
+        log(`Role: ${data.user.role}`, 'info');
+        log(`Company: ${data.user.company_id}`, 'info');
 
         document.getElementById('signInBtn').classList.add('hidden');
         document.getElementById('signOutBtn').classList.remove('hidden');
         document.getElementById('authStatus').classList.remove('hidden');
         document.getElementById('userEmail').textContent = data.user.email;
-        document.getElementById('userRole').textContent = data.user.app_metadata?.role || 'unknown';
-        document.getElementById('userCompany').textContent = data.user.app_metadata?.company_id || 'unknown';
+        document.getElementById('userRole').textContent = data.user.role || 'unknown';
+        document.getElementById('userCompany').textContent = data.user.company_id || 'unknown';
       } catch (e) {
         log(`Network error: ${e.message}`, 'error');
       }

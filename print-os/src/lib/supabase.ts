@@ -3,6 +3,7 @@
 // =====================================================================
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import WebSocket from 'ws';
 
 let _adminClient: SupabaseClient | null = null;
 let _publicClient: SupabaseClient | null = null;
@@ -25,6 +26,8 @@ export function getSupabaseAdmin(): SupabaseClient {
       autoRefreshToken: false,
       persistSession: false,
     },
+    // Workaround for Node.js 20 (no native WebSocket)
+    realtime: { transport: WebSocket as any },
   });
 
   return _adminClient;
@@ -47,6 +50,7 @@ export function getSupabasePublic(): SupabaseClient {
       autoRefreshToken: false,
       persistSession: false,
     },
+    realtime: { transport: WebSocket as any },
   });
 
   return _publicClient;
@@ -69,5 +73,6 @@ export function getSupabaseForUser(accessToken: string): SupabaseClient {
         Authorization: `Bearer ${accessToken}`,
       },
     },
+    realtime: { transport: WebSocket as any },
   });
 }

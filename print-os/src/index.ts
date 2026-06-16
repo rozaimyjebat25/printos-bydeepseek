@@ -16,6 +16,7 @@ import salesOrder from './routes/salesOrder';
 import production from './routes/production';
 import dashboard from './routes/dashboard';
 import customer from './routes/customer';
+import auth from './routes/auth';
 
 const app = new Hono();
 
@@ -62,6 +63,7 @@ app.get('/dashboard', (c) => {
 // =====================================================================
 // API routes (with auth)
 // =====================================================================
+app.route('/api/v1/auth', auth);
 app.route('/api/v1/quotations', quotation);
 app.route('/api/v1/sales-orders', salesOrder);
 app.route('/api/v1/production', production);
