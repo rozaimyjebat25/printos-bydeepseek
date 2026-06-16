@@ -1,15 +1,14 @@
 # Nixpacks configuration for PRINT OS API
-# This tells Railway to build from the api/ directory
+# Railway akan auto-detect ini dan run build dari api/
 
-[build]
-builder = "nixpacks"
-buildCommand = "npm install && npm run build"
-startCommand = "npm start"
+[phases.setup]
+nixPkgs = ["nodejs-20_x", "npm-10_x"]
 
-[build.nixpacksConfig]
-# Use Node.js 20 LTS
-providers = ["node"]
-# Build inside api/ subdirectory
-workdir = "api"
-# Install dev dependencies for TypeScript build
-installCommand = "npm install"
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm start"
