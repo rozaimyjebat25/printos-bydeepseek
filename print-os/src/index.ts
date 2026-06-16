@@ -5,8 +5,11 @@
 
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
+import { serveStatic } from '@hono/node-server/serve-static';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { readFileSync, existsSync } from 'fs';
+import { join, resolve } from 'path';
 
 import quotation from './routes/quotation';
 import salesOrder from './routes/salesOrder';
@@ -35,6 +38,7 @@ app.get('/', (c) => c.json({
   version: '1.0.0',
   status: 'ok',
   timestamp: new Date().toISOString(),
+  dashboard: '/dashboard',
 }));
 
 app.get('/health', (c) => c.json({
@@ -42,6 +46,18 @@ app.get('/health', (c) => c.json({
   uptime: process.uptime(),
   timestamp: new Date().toISOString(),
 }));
+
+// =====================================================================
+// Test Dashboard (HTML UI)
+// =====================================================================
+app.get('/dashboard', (c) => {
+  const dashboardPath = resolve(join(process.cwd(), 'public', 'index.html'));
+  if (existsSync(dashboardPath)) {
+    const html = readFileSync(dashboardPath, 'utf8');
+    return c.html(html);
+  }
+  return c.text('Dashboard not found. Path: ' + dashboardPath, 404);
+});
 
 // =====================================================================
 // API routes (with auth)

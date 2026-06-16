@@ -32,6 +32,9 @@ RUN npm ci --omit=dev || npm install --omit=dev
 # Copy built JavaScript from builder
 COPY --from=builder /app/dist ./dist
 
+# Copy public assets (dashboard HTML)
+COPY public ./public
+
 # Expose port (Railway will inject PORT)
 EXPOSE 8080
 

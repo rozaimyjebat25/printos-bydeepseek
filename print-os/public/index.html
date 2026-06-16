@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRINT OS API — Test Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; }
+    pre { font-family: ui-monospace, SFMono-Regular, monospace; }
+    .endpoint { transition: all 0.2s; }
+    .endpoint:hover { transform: translateY(-1px); }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">P</div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900">PRINT OS API</h1>
+          <p class="text-xs text-slate-500">Test Dashboard v1.0</p>
+        </div>
+      </div>
+      <div id="healthBadge" class="flex items-center gap-2">
+        <div class="w-2 h-2 bg-slate-300 rounded-full"></div>
+        <span class="text-xs text-slate-600">Checking...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-8 space-y-6">
+
+    <!-- Auth Section -->
+    <section class="bg-white border border-slate-200 rounded-2xl p-6">
+      <h2 class="text-lg font-bold text-slate-900 mb-4">🔐 Authentication</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1">Email</label>
+          <input id="email" type="email" value="owner@srcreative.my" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1">Password</label>
+          <input id="password" type="password" placeholder="Enter your Supabase password" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" />
+        </div>
+      </div>
+
+      <button onclick="signIn()" id="signInBtn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg">
+        Sign In
+      </button>
+      <button onclick="signOut()" id="signOutBtn" class="hidden px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-medium rounded-lg ml-2">
+        Sign Out
+      </button>
+
+      <div id="authStatus" class="mt-4 hidden">
+        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-emerald-700 font-semibold">✓ Signed in as</span>
+            <span id="userEmail" class="text-emerald-900 font-mono text-xs"></span>
+          </div>
+          <div class="text-xs text-emerald-700">
+            Role: <span id="userRole" class="font-mono"></span> · Company: <span id="userCompany" class="font-mono"></span>
+          </div>
+        </div>
+      </div>
+
+      <div id="authError" class="mt-4 hidden">
+        <div class="p-3 bg-rose-50 border border-rose-200 rounded-lg text-sm text-rose-700"></div>
+      </div>
+    </section>
+
+    <!-- Test Endpoints -->
+    <section class="bg-white border border-slate-200 rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-slate-900">🧪 Test Endpoints</h2>
+        <button onclick="runAll()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg">
+          Run All
+        </button>
+      </div>
+
+      <div class="space-y-3" id="endpointsList">
+        <!-- populated by JS -->
+      </div>
+    </section>
+
+    <!-- Output Console -->
+    <section class="bg-slate-900 text-slate-100 rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-bold">📋 Output Console</h2>
+        <button onclick="clearConsole()" class="text-xs text-slate-400 hover:text-white">Clear</button>
+      </div>
+      <pre id="console" class="text-xs leading-relaxed max-h-96 overflow-y-auto whitespace-pre-wrap break-all"></pre>
+    </section>
+
+  </main>
+
+  <script>
+    const API = '';  // same origin
+    const SUPABASE_URL = 'https://ddvytkgskhegfjytwpqz.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdnl0a2dza2hlZ2ZqeXR3cHF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAxMjgzMjMsImV4cCI6MjA2NTcwNDMyM30.AC_hi3oel1Rk-7LbyVcU0mMbADAuC3n4Qf9CikEbJL8';
+
+    let session = null;
+
+    const endpoints = [
+      { name: 'Root Info', method: 'GET', path: '/', auth: false },
+      { name: 'Health Check', method: 'GET', path: '/health', auth: false },
+      { name: 'List Quotations', method: 'GET', path: '/api/v1/quotations', auth: true },
+      { name: 'Get Quotation #1', method: 'GET', path: '/api/v1/quotations/00000000-0000-0000-0000-000000000040', auth: true },
+      { name: 'List Sales Orders', method: 'GET', path: '/api/v1/sales-orders', auth: true },
+      { name: 'List Production Jobs', method: 'GET', path: '/api/v1/production/jobs', auth: true },
+      { name: 'Production Bottlenecks', method: 'GET', path: '/api/v1/production/bottlenecks', auth: true },
+      { name: 'Owner Dashboard', method: 'GET', path: '/api/v1/dashboard/owner', auth: true },
+      { name: 'Repeat Order Predictions', method: 'GET', path: '/api/v1/dashboard/repeat-predictions', auth: true },
+      { name: 'List Customers', method: 'GET', path: '/api/v1/customers', auth: true },
+      { name: 'Revenue Trend (30 days)', method: 'GET', path: '/api/v1/dashboard/revenue-trend?start=2026-05-17T00:00:00Z&end=2026-06-17T00:00:00Z', auth: true },
+    ];
+
+    function log(msg, type = 'info') {
+      const c = document.getElementById('console');
+      const time = new Date().toLocaleTimeString();
+      const colors = {
+        info: 'text-slate-300',
+        success: 'text-emerald-400',
+        error: 'text-rose-400',
+        warn: 'text-amber-400',
+        request: 'text-sky-400',
+      };
+      c.innerHTML += `<span class="${colors[type]}">[${time}] ${msg}\n</span>`;
+      c.scrollTop = c.scrollHeight;
+    }
+
+    function clearConsole() {
+      document.getElementById('console').innerHTML = '';
+    }
+
+    function renderEndpoints() {
+      const list = document.getElementById('endpointsList');
+      list.innerHTML = endpoints.map((e, i) => `
+        <div class="endpoint flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50" id="ep-${i}">
+          <div class="flex items-center gap-3">
+            <span class="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs font-mono rounded">${e.method}</span>
+            <span class="text-sm font-mono text-slate-700">${e.path}</span>
+            ${e.auth ? '<span class="text-xs text-amber-600">🔒 auth</span>' : '<span class="text-xs text-slate-400">public</span>'}
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="ep-status-${i}" class="text-xs text-slate-400">—</span>
+            <button onclick="runEndpoint(${i})" class="px-3 py-1 bg-slate-900 hover:bg-slate-700 text-white text-xs font-medium rounded">
+              Run
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function signIn() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errBox = document.getElementById('authError');
+      errBox.classList.add('hidden');
+
+      log(`Signing in as ${email}...`, 'request');
+
+      try {
+        const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await r.json();
+
+        if (!r.ok) {
+          log(`Sign in failed: ${data.error_description || data.msg || data.message || 'Unknown error'}`, 'error');
+          errBox.classList.remove('hidden');
+          errBox.querySelector('div').textContent = data.error_description || data.msg || data.message || 'Sign in failed';
+          return;
+        }
+
+        session = data;
+        log(`✓ Signed in successfully`, 'success');
+        log(`User: ${data.user.email}`, 'info');
+        log(`Role: ${data.user.app_metadata?.role}`, 'info');
+        log(`Company: ${data.user.app_metadata?.company_id}`, 'info');
+
+        document.getElementById('signInBtn').classList.add('hidden');
+        document.getElementById('signOutBtn').classList.remove('hidden');
+        document.getElementById('authStatus').classList.remove('hidden');
+        document.getElementById('userEmail').textContent = data.user.email;
+        document.getElementById('userRole').textContent = data.user.app_metadata?.role || 'unknown';
+        document.getElementById('userCompany').textContent = data.user.app_metadata?.company_id || 'unknown';
+      } catch (e) {
+        log(`Network error: ${e.message}`, 'error');
+      }
+    }
+
+    function signOut() {
+      session = null;
+      document.getElementById('signInBtn').classList.remove('hidden');
+      document.getElementById('signOutBtn').classList.add('hidden');
+      document.getElementById('authStatus').classList.add('hidden');
+      document.getElementById('password').value = '';
+      log('Signed out', 'warn');
+    }
+
+    async function runEndpoint(i) {
+      const e = endpoints[i];
+      const status = document.getElementById(`ep-status-${i}`);
+
+      const headers = { 'Content-Type': 'application/json' };
+      if (e.auth) {
+        if (!session) {
+          log(`✗ ${e.name}: Not signed in`, 'error');
+          status.textContent = 'no auth';
+          status.className = 'text-xs text-rose-600 font-medium';
+          return;
+        }
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+
+      log(`→ ${e.method} ${e.path}`, 'request');
+      const t0 = Date.now();
+
+      try {
+        const r = await fetch(`${API}${e.path}`, { method: e.method, headers });
+        const ms = Date.now() - t0;
+        let body;
+        try {
+          body = await r.json();
+        } catch {
+          body = await r.text();
+        }
+
+        if (r.ok) {
+          log(`✓ ${e.name} [${r.status}] ${ms}ms`, 'success');
+          log(JSON.stringify(body, null, 2).substring(0, 500), 'info');
+          status.textContent = `${r.status}`;
+          status.className = 'text-xs text-emerald-600 font-medium';
+        } else {
+          log(`✗ ${e.name} [${r.status}] ${ms}ms`, 'error');
+          log(JSON.stringify(body, null, 2).substring(0, 300), 'error');
+          status.textContent = `${r.status}`;
+          status.className = 'text-xs text-rose-600 font-medium';
+        }
+      } catch (err) {
+        log(`✗ ${e.name}: ${err.message}`, 'error');
+        status.textContent = 'fail';
+        status.className = 'text-xs text-rose-600 font-medium';
+      }
+    }
+
+    async function runAll() {
+      log('\n=== Running all endpoints ===\n', 'info');
+      for (let i = 0; i < endpoints.length; i++) {
+        await runEndpoint(i);
+        await new Promise((r) => setTimeout(r, 200));
+      }
+      log('=== Done ===\n', 'success');
+    }
+
+    async function checkHealth() {
+      try {
+        const r = await fetch(`${API}/health`);
+        const data = await r.json();
+        const badge = document.getElementById('healthBadge');
+        if (r.ok && data.status === 'healthy') {
+          badge.innerHTML = `<div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div><span class="text-xs text-emerald-700 font-medium">Healthy · ${Math.round(data.uptime)}s uptime</span>`;
+        } else {
+          badge.innerHTML = `<div class="w-2 h-2 bg-rose-500 rounded-full"></div><span class="text-xs text-rose-700">Down</span>`;
+        }
+      } catch (e) {
+        const badge = document.getElementById('healthBadge');
+        badge.innerHTML = `<div class="w-2 h-2 bg-rose-500 rounded-full"></div><span class="text-xs text-rose-700">Unreachable</span>`;
+      }
+    }
+
+    renderEndpoints();
+    checkHealth();
+    setInterval(checkHealth, 30000);
+  </script>
+</body>
+</html>

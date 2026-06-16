@@ -22,6 +22,9 @@ integration/
 schema/
 supabase/
 
+# Public assets — INCLUDED (dashboard)
+!public/
+
 # Documentation
 *.md
 docs/
