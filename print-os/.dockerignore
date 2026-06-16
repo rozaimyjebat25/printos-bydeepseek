@@ -1,0 +1,66 @@
+# =====================================================================
+# Docker ignore — exclude files yang tidak perlu dalam build context
+# =====================================================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+backend/types/*.d.ts
+backend/types/*.d.ts.map
+backend/types/*.js
+backend/types/*.js.map
+
+# Source files yang bukan untuk API runtime
+backend/
+integration/
+schema/
+supabase/
+
+# Documentation
+*.md
+docs/
+
+# Test & debug files
+test-*.cjs
+test-*.js
+test-*.mjs
+verify-*.cjs
+verify-*.js
+list-*.js
+deploy-schema.js
+deploy.log
+link-user.js
+verify.js
+verify-full.js
+verify-user.js
+schema-check.js
+test-insert.js
+test-seed.js
+test-server.cjs
+
+# Config & env
+.env
+.env.local
+.env.*.local
+*.pem
+*.log
+.git/
+.gitignore
+Procfile
+nixpacks.toml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

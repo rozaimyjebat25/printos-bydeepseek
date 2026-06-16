@@ -1,40 +1,43 @@
 # =====================================================================
-# PRINT OS API — Dockerfile
-# Multi-stage build untuk production deployment
+# PRINT OS API — Production Dockerfile
+# Multi-stage build, optimized for Railway
 # =====================================================================
 
-# Stage 1: Build
+# Stage 1: Build TypeScript
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Install dependencies (including dev for TypeScript build)
+# Install ALL dependencies (including dev for TypeScript)
 COPY package.json package-lock.json* ./
-RUN npm install --include=dev
+RUN npm ci --include=dev || npm install --include=dev
 
-# Copy source code
+# Copy TypeScript config and source
 COPY tsconfig.json ./
 COPY src ./src
 
-# Build TypeScript
+# Build TypeScript → JavaScript
 RUN npm run build
 
-# Stage 2: Production
-FROM node:20-alpine AS production
+# Stage 2: Production runtime
+FROM node:20-alpine AS runtime
 WORKDIR /app
 
-# Install only production dependencies
-COPY package.json package-lock.json* ./
-RUN npm install --omit=dev && npm cache clean --force
+# Set production environment
+ENV NODE_ENV=production
 
-# Copy built artifacts from builder
+# Install ONLY production dependencies
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev || npm install --omit=dev
+
+# Copy built JavaScript from builder
 COPY --from=builder /app/dist ./dist
 
-# Expose port (Railway akan inject PORT env var)
+# Expose port (Railway will inject PORT)
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-8080}/health || exit 1
+# Health check using Node.js (no wget needed)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:'+ (process.env.PORT || 8080) +'/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
-# Start server
-CMD ["sh", "-c", "node dist/index.js"]
+# Start the application
+CMD ["node", "dist/index.js"]
