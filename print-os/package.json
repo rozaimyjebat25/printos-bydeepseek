@@ -1,19 +1,14 @@
 {
-  "name": "print-os",
+  "name": "print-os-monorepo",
   "version": "1.0.0",
-  "type": "module",
-  "main": "deploy-schema.js",
+  "description": "PRINT OS — Multi-tenant SaaS for Visual Communication Industry",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "api:dev": "cd api && npm install && npm run dev",
+    "api:build": "cd api && npm install && npm run build",
+    "api:start": "cd api && npm start"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "supabase": "^2.106.0"
-  },
-  "dependencies": {
-    "pg": "^8.21.0"
+  "engines": {
+    "node": ">=20"
   }
 }
