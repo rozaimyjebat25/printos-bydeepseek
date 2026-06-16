@@ -8,6 +8,11 @@ dist/
 build/
 .next/
 out/
+backend/types/*.d.ts
+backend/types/*.d.ts.map
+backend/types/*.js
+backend/types/*.js.map
+api/dist/
 
 # Environment & secrets
 .env

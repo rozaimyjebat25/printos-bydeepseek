@@ -1,0 +1,16 @@
+# Railway deployment for PRINT OS API
+# Auto-detected by Railway
+
+# Build command
+buildCommand: npm install && npm run build
+
+# Start command
+startCommand: npm run start
+
+# Health check
+healthcheckPath: /health
+healthcheckTimeout: 30
+
+# Restart policy
+restartPolicyType: ON_FAILURE
+restartPolicyMaxRetries: 3
