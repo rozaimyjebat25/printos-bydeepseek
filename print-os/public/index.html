@@ -163,8 +163,8 @@
       log(`Signing in as ${email}...`, 'request');
 
       try {
-        // Call our API's auth proxy endpoint (uses service_role server-side)
-        const r = await fetch(`${API}/api/v1/auth/signin`, {
+        // Call our API's auth verify endpoint
+        const r = await fetch(`${API}/api/v1/auth/verify-password`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
