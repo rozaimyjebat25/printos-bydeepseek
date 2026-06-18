@@ -115,7 +115,10 @@ quotation.get('/', async (c) => {
   }
 
   const { data, count, error } = await query;
-  if (error) return c.json({ error: error.message }, 400);
+  if (error) {
+    console.error('[quotations/list] error:', error.message, 'code:', error.code, 'details:', error.details, 'hint:', error.hint);
+    return c.json({ error: error.message, code: error.code }, 400);
+  }
 
   return c.json({ data, count });
 });

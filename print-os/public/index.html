@@ -44,7 +44,7 @@
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-700 mb-1">Password</label>
-          <input id="password" type="password" placeholder="Enter your Supabase password" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" />
+          <input id="password" type="password" value="PrintOS2026!" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" />
         </div>
       </div>
 
@@ -62,13 +62,46 @@
             <span id="userEmail" class="text-emerald-900 font-mono text-xs"></span>
           </div>
           <div class="text-xs text-emerald-700">
-            Role: <span id="userRole" class="font-mono"></span> · Company: <span id="userCompany" class="font-mono"></span>
+            Role: <span id="userRole" class="font-mono font-semibold"></span> · Company: <span id="userCompany" class="font-mono"></span>
           </div>
         </div>
       </div>
 
       <div id="authError" class="mt-4 hidden">
         <div class="p-3 bg-rose-50 border border-rose-200 rounded-lg text-sm text-rose-700"></div>
+      </div>
+    </section>
+
+    <!-- Quick Role Switcher -->
+    <section class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-6">
+      <h2 class="text-lg font-bold text-slate-900 mb-2">⚡ Quick Role Switcher</h2>
+      <p class="text-xs text-slate-600 mb-4">Test RBAC filtering — login as different roles untuk tengok perbezaan data (especially cost/profit visibility).</p>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="roleSwitcher">
+        <button data-role="owner" data-email="owner@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
+          <div class="text-sm font-semibold text-slate-900">👑 Owner</div>
+          <div class="text-xs text-slate-500">Akses penuh + nampak cost</div>
+        </button>
+        <button data-role="sales" data-email="sales@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
+          <div class="text-sm font-semibold text-slate-900">💼 Sales Executive</div>
+          <div class="text-xs text-slate-500">CRM + Quotation (no cost)</div>
+        </button>
+        <button data-role="designer" data-email="designer@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
+          <div class="text-sm font-semibold text-slate-900">🎨 Designer</div>
+          <div class="text-xs text-slate-500">Artwork only</div>
+        </button>
+        <button data-role="production" data-email="production@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
+          <div class="text-sm font-semibold text-slate-900">🏭 Production</div>
+          <div class="text-xs text-slate-500">Job queue (no cost)</div>
+        </button>
+        <button data-role="finance" data-email="finance@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
+          <div class="text-sm font-semibold text-slate-900">💰 Finance</div>
+          <div class="text-xs text-slate-500">Invoice + Payment + Profit</div>
+        </button>
+        <button data-role="customer" data-email="customer@example.com" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
+          <div class="text-sm font-semibold text-slate-900">🛒 Customer</div>
+          <div class="text-xs text-slate-500">Portal — order sendiri</div>
+        </button>
       </div>
     </section>
 
@@ -201,9 +234,21 @@
       document.getElementById('signInBtn').classList.remove('hidden');
       document.getElementById('signOutBtn').classList.add('hidden');
       document.getElementById('authStatus').classList.add('hidden');
-      document.getElementById('password').value = '';
+      document.getElementById('password').value = 'PrintOS2026!';
       log('Signed out', 'warn');
     }
+
+    // Role Switcher
+    document.querySelectorAll('.role-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const email = btn.getAttribute('data-email');
+        const role = btn.getAttribute('data-role');
+        document.getElementById('email').value = email;
+        document.getElementById('password').value = 'PrintOS2026!';
+        log(`→ Switching to ${role} (${email})`, 'request');
+        signIn();
+      });
+    });
 
     async function runEndpoint(i) {
       const e = endpoints[i];
