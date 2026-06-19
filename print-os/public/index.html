@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PRINT OS — Dashboard</title>
+  <title>PRINT OS — Demo</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -16,7 +16,6 @@
       --warm-dark: #2D2A24;
       --warm-gray: #8B7D72;
       --warm-border: #E8E0D6;
-      --card-shadow: 0 2px 16px rgba(45, 42, 36, 0.06);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -25,446 +24,316 @@
       color: var(--warm-dark);
       -webkit-font-smoothing: antialiased;
     }
-    h1, h2, h3, .serif { font-family: 'DM Serif Display', Georgia, serif; }
-    pre, code, .mono { font-family: 'SF Mono', 'JetBrains Mono', ui-monospace, monospace; }
+    .serif { font-family: 'DM Serif Display', Georgia, serif; }
+    .mono { font-family: 'SF Mono', 'JetBrains Mono', ui-monospace, monospace; }
     ::selection { background: var(--gold-light); color: var(--warm-dark); }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--warm-border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--gold-light); }
 
-    .endpoint-card {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid var(--warm-border);
-    }
-    .endpoint-card:hover {
-      border-color: var(--gold-light);
-      box-shadow: 0 4px 20px rgba(196, 149, 106, 0.1);
-      transform: translateY(-1px);
-    }
-
-    .role-chip {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    .role-card {
+      background: white;
       border: 1.5px solid var(--warm-border);
+      border-radius: 16px;
+      padding: 20px 16px;
       cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
     }
-    .role-chip:hover {
+    .role-card:hover {
       border-color: var(--gold);
-      background: white;
-      box-shadow: 0 4px 16px rgba(196, 149, 106, 0.15);
-      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(196, 149, 106, 0.15);
+      transform: translateY(-3px);
     }
-    .role-chip.active {
+    .role-card.active {
       border-color: var(--gold);
-      background: white;
-      box-shadow: 0 2px 12px rgba(196, 149, 106, 0.2);
+      background: #FDFAF7;
+      box-shadow: 0 4px 20px rgba(196, 149, 106, 0.2);
     }
+    .role-card:active { transform: translateY(-1px); }
 
-    .premium-input {
-      border: 1.5px solid var(--warm-border);
-      transition: all 0.2s;
-      background: white;
-    }
-    .premium-input:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(196, 149, 106, 0.12);
-      outline: none;
-    }
+    .data-table td:first-child { color: var(--warm-gray); font-size: 12px; padding-right: 16px; white-space: nowrap; }
+    .data-table td:last-child { font-weight: 600; font-size: 14px; }
+    .data-table tr { border-bottom: 1px solid #F0EBE5; }
+    .data-table tr:last-child { border-bottom: none; }
 
-    .btn-gold {
-      background: var(--gold);
-      color: white;
-      transition: all 0.25s;
-      font-weight: 500;
-    }
-    .btn-gold:hover {
-      background: var(--gold-dark);
-      box-shadow: 0 4px 16px rgba(196, 149, 106, 0.3);
-      transform: translateY(-1px);
-    }
-    .btn-gold:active { transform: translateY(0); }
+    .field-hidden { color: #D4C8BE !important; }
+    .field-visible { color: var(--warm-dark) !important; }
 
-    .btn-ghost {
-      background: transparent;
-      border: 1.5px solid var(--warm-border);
-      color: var(--warm-gray);
-      transition: all 0.2s;
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .btn-ghost:hover {
-      border-color: var(--gold);
-      color: var(--gold-dark);
-      background: rgba(196, 149, 106, 0.05);
-    }
+    .fade-in { animation: fadeSlideUp 0.4s ease-out; }
 
-    .console-line { animation: fadeIn 0.2s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
-    .pulse-dot { animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-    .card {
-      background: white;
-      border: 1px solid var(--warm-border);
-      border-radius: 20px;
-      box-shadow: var(--card-shadow);
-    }
+    .loader { width: 20px; height: 20px; border: 2px solid var(--warm-border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.6s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 640px) {
-      .card { border-radius: 16px; }
+      .role-card { padding: 14px 12px; }
+      .role-card .icon { font-size: 24px; }
+      .role-card .label { font-size: 12px; }
     }
   </style>
 </head>
 <body>
 
   <!-- Header -->
-  <header class="sticky top-0 z-20 backdrop-blur-xl bg-[#F8F4F0]/80 border-b border-[#E8E0D6]">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-[#C4956A] rounded-xl flex items-center justify-center shadow-sm">
-          <span class="text-white font-serif text-lg font-bold italic">P</span>
-        </div>
-        <div>
-          <h1 class="text-base font-semibold text-[#2D2A24] tracking-tight">PRINT OS</h1>
-          <p class="text-[10px] text-[#8B7D72] tracking-wider uppercase">Test Dashboard</p>
-        </div>
+  <header class="h-16 flex items-center justify-between px-4 sm:px-8 border-b border-[var(--warm-border)] bg-white/60 backdrop-blur-md sticky top-0 z-20">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-xl bg-[var(--gold)] flex items-center justify-center shadow-sm">
+        <span class="text-white serif text-base font-bold italic">P</span>
       </div>
-      <div id="healthBadge" class="flex items-center gap-2.5 px-3 py-1.5 bg-white/60 rounded-full border border-[#E8E0D6]">
-        <div class="w-1.5 h-1.5 rounded-full bg-[#8B7D72]"></div>
-        <span class="text-[11px] text-[#8B7D72] font-medium">Checking...</span>
-      </div>
+      <span class="serif text-lg text-[var(--warm-dark)] tracking-tight">PRINT OS</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="signedInAs" class="text-xs text-[var(--warm-gray)] hidden"></span>
+      <button id="signOutBtn" onclick="signOut()" class="hidden text-xs text-[var(--warm-gray)] hover:text-[var(--gold-dark)] transition-colors px-3 py-1.5 rounded-lg border border-[var(--warm-border)] hover:border-[var(--gold-light)]">
+        Sign out
+      </button>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
 
-    <!-- Auth Section -->
-    <section class="card p-5 sm:p-7">
-      <div class="flex items-center gap-2 mb-5">
-        <span class="text-lg">🔐</span>
-        <h2 class="text-lg serif text-[#2D2A24]">Authentication</h2>
+    <!-- Hero -->
+    <div class="text-center mb-10 sm:mb-14 fade-in">
+      <p class="text-xs text-[var(--gold)] font-semibold tracking-[0.2em] uppercase mb-3">Multi-tenant SaaS</p>
+      <h1 class="serif text-3xl sm:text-4xl text-[var(--warm-dark)] leading-tight mb-3">Test Drive PRINT OS</h1>
+      <p class="text-sm text-[var(--warm-gray)] max-w-md mx-auto">Click any role to explore the system. Each role sees different data based on permissions.</p>
+    </div>
+
+    <!-- Role Cards -->
+    <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 mb-10 sm:mb-14 fade-in" id="roleGrid">
+      <div class="role-card" data-role="owner" data-email="owner@srcreative.my">
+        <div class="icon text-2xl sm:text-3xl mb-2">👑</div>
+        <div class="label text-sm font-semibold">Owner</div>
+        <div class="text-[10px] text-[var(--warm-gray)] mt-0.5">Full access</div>
       </div>
+      <div class="role-card" data-role="management" data-email="management@srcreative.my">
+        <div class="icon text-2xl sm:text-3xl mb-2">📊</div>
+        <div class="label text-sm font-semibold">Management</div>
+        <div class="text-[10px] text-[var(--warm-gray)] mt-0.5">Operations</div>
+      </div>
+      <div class="role-card" data-role="sales" data-email="sales@srcreative.my">
+        <div class="icon text-2xl sm:text-3xl mb-2">💼</div>
+        <div class="label text-sm font-semibold">Sales</div>
+        <div class="text-[10px] text-[var(--warm-gray)] mt-0.5">CRM + Quote</div>
+      </div>
+      <div class="role-card" data-role="designer" data-email="designer@srcreative.my">
+        <div class="icon text-2xl sm:text-3xl mb-2">🎨</div>
+        <div class="label text-sm font-semibold">Designer</div>
+        <div class="text-[10px] text-[var(--warm-gray)] mt-0.5">Artwork</div>
+      </div>
+      <div class="role-card" data-role="production" data-email="production@srcreative.my">
+        <div class="icon text-2xl sm:text-3xl mb-2">🏭</div>
+        <div class="label text-sm font-semibold">Production</div>
+        <div class="text-[10px] text-[var(--warm-gray)] mt-0.5">Job queue</div>
+      </div>
+      <div class="role-card" data-role="finance" data-email="finance@srcreative.my">
+        <div class="icon text-2xl sm:text-3xl mb-2">💰</div>
+        <div class="label text-sm font-semibold">Finance</div>
+        <div class="text-[10px] text-[var(--warm-gray)] mt-0.5">Invoices</div>
+      </div>
+    </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <div>
-          <label class="block text-xs font-medium text-[#8B7D72] mb-1.5 tracking-wide uppercase">Email</label>
-          <input id="email" type="email" value="owner@srcreative.my" class="premium-input w-full px-3.5 py-2.5 rounded-xl text-sm text-[#2D2A24] placeholder-[#8B7D72]/50" />
+    <!-- Data Preview (shown after sign in) -->
+    <div id="dataPanel" class="hidden fade-in">
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6" id="statsGrid">
+        <div class="bg-white rounded-2xl border border-[var(--warm-border)] p-4 sm:p-5 text-center">
+          <div class="text-[10px] text-[var(--warm-gray)] uppercase tracking-wider mb-1">Total Revenue</div>
+          <div id="statRevenue" class="serif text-xl sm:text-2xl text-[var(--warm-dark)]">—</div>
         </div>
-        <div>
-          <label class="block text-xs font-medium text-[#8B7D72] mb-1.5 tracking-wide uppercase">Password</label>
-          <input id="password" type="password" value="PrintOS2026!" class="premium-input w-full px-3.5 py-2.5 rounded-xl text-sm text-[#2D2A24]" />
+        <div class="bg-white rounded-2xl border border-[var(--warm-border)] p-4 sm:p-5 text-center">
+          <div class="text-[10px] text-[var(--warm-gray)] uppercase tracking-wider mb-1">Quotations</div>
+          <div id="statQuotations" class="serif text-xl sm:text-2xl text-[var(--warm-dark)]">—</div>
+        </div>
+        <div class="bg-white rounded-2xl border border-[var(--warm-border)] p-4 sm:p-5 text-center">
+          <div class="text-[10px] text-[var(--warm-gray)] uppercase tracking-wider mb-1">Sales Orders</div>
+          <div id="statOrders" class="serif text-xl sm:text-2xl text-[var(--warm-dark)]">—</div>
+        </div>
+        <div class="bg-white rounded-2xl border border-[var(--warm-border)] p-4 sm:p-5 text-center">
+          <div class="text-[10px] text-[var(--warm-gray)] uppercase tracking-wider mb-1">Customers</div>
+          <div id="statCustomers" class="serif text-xl sm:text-2xl text-[var(--warm-dark)]">—</div>
         </div>
       </div>
 
-      <div class="flex flex-wrap gap-2">
-        <button onclick="signIn()" id="signInBtn" class="btn-gold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-          Sign In
-        </button>
-        <button onclick="signOut()" id="signOutBtn" class="hidden btn-ghost px-5 py-2.5 rounded-xl text-sm">
-          Sign Out
-        </button>
-      </div>
-
-      <div id="authStatus" class="mt-4 hidden">
-        <div class="p-4 bg-[#F0F7F4] border border-[#C8E0D0] rounded-xl">
-          <div class="flex items-center gap-2 mb-1.5">
-            <svg class="w-4 h-4 text-[#5A9E7A]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-            <span class="text-sm font-semibold text-[#2D5A3E]">Signed in as</span>
-            <span id="userEmail" class="text-xs font-mono text-[#2D5A3E]/80"></span>
-          </div>
-          <div class="text-xs text-[#2D5A3E]/70 flex flex-wrap gap-x-4 gap-y-1">
-            <span>Role: <span id="userRole" class="font-mono font-semibold"></span></span>
-            <span>Company: <span id="userCompany" class="font-mono"></span></span>
-          </div>
+      <!-- Quotation Detail -->
+      <div class="bg-white rounded-2xl border border-[var(--warm-border)] p-5 sm:p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="serif text-lg text-[var(--warm-dark)]">Latest Quotation</h2>
+          <span id="quotationNo" class="mono text-xs text-[var(--warm-gray)] bg-[var(--cream)] px-3 py-1 rounded-full"></span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full data-table">
+            <tr><td>Subtotal</td><td id="qSubtotal">—</td></tr>
+            <tr><td>Total</td><td id="qTotal">—</td></tr>
+            <tr><td>Cost</td><td id="qCost">—</td></tr>
+            <tr><td>Gross Profit</td><td id="qProfit">—</td></tr>
+            <tr><td>Margin</td><td id="qMargin">—</td></tr>
+          </table>
         </div>
       </div>
 
-      <div id="authError" class="mt-4 hidden">
-        <div class="p-4 bg-[#FDF0EE] border border-[#E8C8C0] rounded-xl text-sm text-[#8B4A3E]"></div>
-      </div>
-    </section>
-
-    <!-- Quick Role Switcher -->
-    <section class="card p-5 sm:p-7">
-      <div class="flex items-center gap-2 mb-1">
-        <span class="text-lg">⚡</span>
-        <h2 class="text-lg serif text-[#2D2A24]">Quick Role Switcher</h2>
-      </div>
-      <p class="text-sm text-[#8B7D72] mb-5">Test RBAC filtering — each role sees different data based on permissions</p>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5" id="roleSwitcher">
-        <button data-role="owner" data-email="owner@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
-          <div class="text-lg mb-0.5">👑</div>
-          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Owner</div>
-          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Full access</div>
-        </button>
-        <button data-role="management" data-email="management@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
-          <div class="text-lg mb-0.5">📊</div>
-          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Management</div>
-          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Operations</div>
-        </button>
-        <button data-role="sales" data-email="sales@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
-          <div class="text-lg mb-0.5">💼</div>
-          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Sales</div>
-          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">CRM + Quote</div>
-        </button>
-        <button data-role="designer" data-email="designer@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
-          <div class="text-lg mb-0.5">🎨</div>
-          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Designer</div>
-          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Artwork</div>
-        </button>
-        <button data-role="production" data-email="production@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
-          <div class="text-lg mb-0.5">🏭</div>
-          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Production</div>
-          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Job Queue</div>
-        </button>
-        <button data-role="finance" data-email="finance@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
-          <div class="text-lg mb-0.5">💰</div>
-          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Finance</div>
-          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Invoices</div>
-        </button>
-      </div>
-
-      <div class="mt-4 flex flex-wrap gap-1.5">
-        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#F0F7F4] text-[#5A9E7A] text-[10px] font-medium rounded-full">👑 Owner sees cost ✓</span>
-        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFF8F0] text-[#C4956A] text-[10px] font-medium rounded-full">💼 Sales cost hidden 🔒</span>
-        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFF8F0] text-[#C4956A] text-[10px] font-medium rounded-full">🎨 Designer cost hidden 🔒</span>
-        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFF8F0] text-[#C4956A] text-[10px] font-medium rounded-full">🏭 Production cost hidden 🔒</span>
-      </div>
-    </section>
-
-    <!-- Test Endpoints -->
-    <section class="card p-5 sm:p-7">
-      <div class="flex items-center justify-between mb-5">
-        <div class="flex items-center gap-2">
-          <span class="text-lg">🧪</span>
-          <h2 class="text-lg serif text-[#2D2A24]">Test Endpoints</h2>
+      <!-- Sales Order -->
+      <div class="bg-white rounded-2xl border border-[var(--warm-border)] p-5 sm:p-6 mb-6">
+        <h2 class="serif text-lg text-[var(--warm-dark)] mb-4">Latest Sales Order</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full data-table">
+            <tr><td>Order No</td><td id="soNumber" class="mono">—</td></tr>
+            <tr><td>Total</td><td id="soTotal">—</td></tr>
+            <tr><td>Cost</td><td id="soCost">—</td></tr>
+            <tr><td>Profit</td><td id="soProfit">—</td></tr>
+            <tr><td>Status</td><td id="soStatus">—</td></tr>
+          </table>
         </div>
-        <button onclick="runAll()" class="btn-gold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          Run All
-        </button>
       </div>
 
-      <div class="space-y-2" id="endpointsList"></div>
-    </section>
-
-    <!-- Output Console -->
-    <section class="rounded-2xl overflow-hidden border border-[#E8E0D6] bg-[#1A1816] shadow-xl">
-      <div class="flex items-center justify-between px-5 py-3.5 bg-[#2D2A24] border-b border-[#3D3A34]">
-        <div class="flex items-center gap-3">
-          <div class="flex gap-1.5">
-            <div class="w-2.5 h-2.5 rounded-full bg-[#E86A5F]"></div>
-            <div class="w-2.5 h-2.5 rounded-full bg-[#F4BD4E]"></div>
-            <div class="w-2.5 h-2.5 rounded-full bg-[#61C454]"></div>
-          </div>
-          <span class="text-[11px] text-[#8B7D72] font-mono">console.log</span>
+      <!-- Production Jobs -->
+      <div class="bg-white rounded-2xl border border-[var(--warm-border)] p-5 sm:p-6">
+        <h2 class="serif text-lg text-[var(--warm-dark)] mb-4">Production</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full data-table">
+            <tr><td>Active Jobs</td><td id="prodActive">—</td></tr>
+            <tr><td>Bottlenecks</td><td id="prodBottlenecks">—</td></tr>
+            <tr><td>On-Time %</td><td id="prodOntime">—</td></tr>
+          </table>
         </div>
-        <button onclick="clearConsole()" class="text-[10px] text-[#8B7D72] hover:text-[#E8E0D6] transition-colors tracking-wider uppercase">Clear</button>
       </div>
-      <pre id="console" class="text-[12px] leading-relaxed p-5 max-h-80 overflow-y-auto whitespace-pre-wrap break-all font-mono"></pre>
-    </section>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingPanel" class="hidden text-center py-16 fade-in">
+      <div class="loader mb-3"></div>
+      <p class="text-sm text-[var(--warm-gray)]">Signing in...</p>
+    </div>
+
+    <!-- Error -->
+    <div id="errorPanel" class="hidden text-center py-10 fade-in">
+      <p class="text-sm text-[#C47A6A]">Failed to sign in. <span id="errorMsg"></span></p>
+    </div>
 
   </main>
 
+  <!-- Footer -->
+  <footer class="text-center py-6 text-[10px] text-[#C4B5A0] tracking-wider border-t border-[var(--warm-border)]">
+    PRINT OS V1.0 — Multi-tenant SaaS for Visual Communication
+  </footer>
+
   <script>
   const API = '';
+  const ROLE_EMAILS = {
+    owner: 'owner@srcreative.my',
+    management: 'management@srcreative.my',
+    sales: 'sales@srcreative.my',
+    designer: 'designer@srcreative.my',
+    production: 'production@srcreative.my',
+    finance: 'finance@srcreative.my',
+  };
+
   let session = null;
 
-  const endpoints = [
-    { name: 'Root Info', method: 'GET', path: '/', auth: false },
-    { name: 'Health Check', method: 'GET', path: '/health', auth: false },
-    { name: 'List Quotations', method: 'GET', path: '/api/v1/quotations', auth: true },
-    { name: 'Get Quotation', method: 'GET', path: '/api/v1/quotations/00000000-0000-0000-0000-000000000040', auth: true },
-    { name: 'List Sales Orders', method: 'GET', path: '/api/v1/sales-orders', auth: true },
-    { name: 'List Production Jobs', method: 'GET', path: '/api/v1/production/jobs', auth: true },
-    { name: 'Production Bottlenecks', method: 'GET', path: '/api/v1/production/bottlenecks', auth: true },
-    { name: 'Owner Dashboard', method: 'GET', path: '/api/v1/dashboard/owner', auth: true },
-    { name: 'Repeat Order Predictions', method: 'GET', path: '/api/v1/dashboard/repeat-predictions', auth: true },
-    { name: 'List Customers', method: 'GET', path: '/api/v1/customers', auth: true },
-    { name: 'Revenue Trend', method: 'GET', path: '/api/v1/dashboard/revenue-trend?start=2026-05-17T00:00:00Z&end=2026-06-17T00:00:00Z', auth: true },
-  ];
+  function $(id) { return document.getElementById(id); }
 
-  function log(msg, type = 'info') {
-    const c = document.getElementById('console');
-    const time = new Date().toLocaleTimeString();
-    const colors = {
-      info: 'text-[#C4B5A0]',
-      success: 'text-[#61C454]',
-      error: 'text-[#E86A5F]',
-      warn: 'text-[#F4BD4E]',
-      request: 'text-[#7AB8E0]',
-    };
-    c.innerHTML += `<span class="${colors[type]}"><span class="text-[#5A554F]">[${time}]</span> ${msg}</span>\n`;
-    c.scrollTop = c.scrollHeight;
-  }
+  document.querySelectorAll('.role-card').forEach((card) => {
+    card.addEventListener('click', async () => {
+      const email = card.dataset.email;
+      const role = card.dataset.role;
+      document.querySelectorAll('.role-card').forEach((c) => c.classList.remove('active'));
+      card.classList.add('active');
+      $('dataPanel').classList.add('hidden');
+      $('errorPanel').classList.add('hidden');
+      $('loadingPanel').classList.remove('hidden');
+      await signIn(email, role);
+    });
+  });
 
-  function clearConsole() {
-    document.getElementById('console').innerHTML = '';
-  }
-
-  function renderEndpoints() {
-    const list = document.getElementById('endpointsList');
-    list.innerHTML = endpoints.map((e, i) => `
-      <div class="endpoint-card flex items-center justify-between p-3.5 rounded-xl bg-white" id="ep-${i}">
-        <div class="flex items-center gap-3 min-w-0">
-          <span class="px-2 py-0.5 bg-[#F8F4F0] text-[#8B7D72] text-[10px] font-mono font-semibold rounded-md shrink-0">${e.method}</span>
-          <span class="text-[13px] font-mono text-[#2D2A24] truncate">${e.path}</span>
-          ${e.auth ? '<span class="text-[10px] text-[#C4956A] shrink-0">🔒</span>' : '<span class="text-[10px] text-[#8B7D72] shrink-0">🌐</span>'}
-        </div>
-        <div class="flex items-center gap-3 shrink-0 ml-3">
-          <span id="ep-status-${i}" class="text-[11px] text-[#8B7D72] font-medium">—</span>
-          <button onclick="runEndpoint(${i})" class="px-3 py-1.5 bg-[#2D2A24] hover:bg-[#3D3A34] text-white text-[11px] font-medium rounded-lg transition-colors">
-            Run
-          </button>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  async function signIn() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errBox = document.getElementById('authError');
-    errBox.classList.add('hidden');
-
-    log(`Signing in as ${email}...`, 'request');
-
+  async function signIn(email, role) {
     try {
       const r = await fetch(`${API}/api/v1/auth/verify-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password: 'PrintOS2026!' }),
       });
-
       const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'Sign in failed');
 
-      if (!r.ok) {
-        log(`Sign in failed: ${data.error || data.detail || 'Unknown error'}`, 'error');
-        errBox.classList.remove('hidden');
-        errBox.querySelector('div').textContent = data.error || data.detail || 'Sign in failed';
-        return;
-      }
-
-      session = { access_token: data.access_token, refresh_token: data.refresh_token, user: data.user };
-      log(`Signed in as ${data.user.email}`, 'success');
-      log(`Role: ${data.user.role} | Company: ${data.user.company_id}`, 'info');
-
-      document.getElementById('signInBtn').classList.add('hidden');
-      document.getElementById('signOutBtn').classList.remove('hidden');
-      document.getElementById('authStatus').classList.remove('hidden');
-      document.getElementById('userEmail').textContent = data.user.email;
-      document.getElementById('userRole').textContent = data.user.role || 'unknown';
-      document.getElementById('userCompany').textContent = data.user.company_id || 'unknown';
-
-      // Active role chip
-      document.querySelectorAll('.role-chip').forEach((c) => {
-        c.classList.toggle('active', c.getAttribute('data-email') === email);
-      });
+      session = { access_token: data.access_token, user: data.user };
+      $('signedInAs').textContent = `${data.user.role}`;
+      $('signedInAs').classList.remove('hidden');
+      $('signOutBtn').classList.remove('hidden');
+      $('loadingPanel').classList.add('hidden');
+      $('dataPanel').classList.remove('hidden');
+      await loadData();
     } catch (e) {
-      log(`Network error: ${e.message}`, 'error');
+      $('loadingPanel').classList.add('hidden');
+      $('errorPanel').classList.remove('hidden');
+      $('errorMsg').textContent = e.message;
     }
   }
 
   function signOut() {
     session = null;
-    document.getElementById('signInBtn').classList.remove('hidden');
-    document.getElementById('signOutBtn').classList.add('hidden');
-    document.getElementById('authStatus').classList.add('hidden');
-    document.getElementById('password').value = 'PrintOS2026!';
-    document.querySelectorAll('.role-chip').forEach((c) => c.classList.remove('active'));
-    log('Signed out', 'warn');
+    document.querySelectorAll('.role-card').forEach((c) => c.classList.remove('active'));
+    $('signedInAs').classList.add('hidden');
+    $('signOutBtn').classList.add('hidden');
+    $('dataPanel').classList.add('hidden');
   }
 
-  document.querySelectorAll('.role-chip').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const email = btn.getAttribute('data-email');
-      document.getElementById('email').value = email;
-      document.getElementById('password').value = 'PrintOS2026!';
-      log(`→ Switching to ${btn.getAttribute('data-role')}`, 'request');
-      signIn();
-    });
-  });
+  async function loadData() {
+    if (!session) return;
+    const h = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` };
 
-  async function runEndpoint(i) {
-    const e = endpoints[i];
-    const status = document.getElementById(`ep-status-${i}`);
+    // Fetch all in parallel
+    const [qList, qDetail, soList, soDetail, prod, prodB, cust, dash] = await Promise.all([
+      fetch(`${API}/api/v1/quotations`, { headers: h }).then(r => r.json()),
+      fetch(`${API}/api/v1/quotations/00000000-0000-0000-0000-000000000040`, { headers: h }).then(r => r.json()),
+      fetch(`${API}/api/v1/sales-orders`, { headers: h }).then(r => r.json()),
+      fetch(`${API}/api/v1/sales-orders/00000000-0000-0000-0000-000000000050`, { headers: h }).then(r => r.json()),
+      fetch(`${API}/api/v1/production/jobs`, { headers: h }).then(r => r.json()),
+      fetch(`${API}/api/v1/production/bottlenecks`, { headers: h }).then(r => r.json()),
+      fetch(`${API}/api/v1/customers`, { headers: h }).then(r => r.json()),
+      fetch(`${API}/api/v1/dashboard/owner`, { headers: h }).then(r => r.json()),
+    ]);
 
-    const headers = { 'Content-Type': 'application/json' };
-    if (e.auth) {
-      if (!session) {
-        log(`✗ ${e.name}: Not signed in`, 'error');
-        status.textContent = 'no auth';
-        status.style.color = '#E86A5F';
-        return;
-      }
-      headers['Authorization'] = `Bearer ${session.access_token}`;
+    // Stats row
+    $('statRevenue').textContent = dash.data?.month?.total_revenue ? `RM${dash.data.month.total_revenue}` : '—';
+    $('statQuotations').textContent = qList.count ?? '—';
+    $('statOrders').textContent = soList.count ?? '—';
+    $('statCustomers').textContent = cust.count ?? '—';
+
+    // Quotation
+    const q = qDetail.data;
+    if (q) {
+      $('quotationNo').textContent = q.quotation_no;
+      $('qSubtotal').textContent = `RM${q.subtotal}`;
+      $('qTotal').textContent = `RM${q.total}`;
+      const canSeeCost = q.cost_total > 0;
+      $('qCost').textContent = `RM${q.cost_total}`;
+      $('qCost').className = canSeeCost ? 'field-visible' : 'field-hidden';
+      $('qCost').innerHTML += canSeeCost ? '' : ' <span class="text-[10px] text-[#D4C8BE]">(hidden)</span>';
+      $('qProfit').textContent = `RM${q.gross_profit}`;
+      $('qProfit').className = canSeeCost ? 'field-visible' : 'field-hidden';
+      $('qMargin').textContent = `${q.margin_percent}%`;
+      $('qMargin').className = canSeeCost ? 'field-visible' : 'field-hidden';
     }
 
-    log(`→ ${e.method} ${e.path}`, 'request');
-    const t0 = Date.now();
-
-    try {
-      const r = await fetch(`${API}${e.path}`, { method: e.method, headers });
-      const ms = Date.now() - t0;
-      let body;
-      try { body = await r.json(); } catch { body = await r.text(); }
-
-      if (r.ok) {
-        log(`✓ ${e.name} [${r.status}] ${ms}ms`, 'success');
-        if (typeof body === 'object' && body.data) {
-          if (Array.isArray(body.data)) {
-            log(`  ${body.data.length} results`, 'info');
-            log(`  First: ${JSON.stringify(body.data[0]).substring(0, 300)}`, 'info');
-          } else {
-            log(`  ${JSON.stringify(body.data).substring(0, 500)}`, 'info');
-          }
-        } else {
-          log(`  ${JSON.stringify(body).substring(0, 500)}`, 'info');
-        }
-        status.textContent = `${r.status}`;
-        status.style.color = '#61C454';
-      } else {
-        log(`✗ ${e.name} [${r.status}] ${ms}ms`, 'error');
-        log(`  ${JSON.stringify(body).substring(0, 300)}`, 'error');
-        status.textContent = `${r.status}`;
-        status.style.color = '#E86A5F';
-      }
-    } catch (err) {
-      log(`✗ ${e.name}: ${err.message}`, 'error');
-      status.textContent = 'fail';
-      status.style.color = '#E86A5F';
+    // Sales Order
+    const so = soDetail.data;
+    if (so) {
+      $('soNumber').textContent = so.so_number;
+      $('soTotal').textContent = `RM${so.total}`;
+      const canSeeSOCost = so.cost_total > 0;
+      $('soCost').textContent = `RM${so.cost_total}`;
+      $('soCost').className = canSeeSOCost ? 'field-visible' : 'field-hidden';
+      $('soProfit').textContent = `RM${so.gross_profit}`;
+      $('soProfit').className = canSeeSOCost ? 'field-visible' : 'field-hidden';
+      $('soStatus').textContent = so.status;
     }
+
+    // Production
+    $('prodActive').textContent = prod.count ?? '—';
+    $('prodBottlenecks').textContent = (prodB.data && prodB.data.length > 0) ? prodB.data.length : 'None';
+    $('prodOntime').textContent = dash.data?.month?.on_time_rate ? `${dash.data.month.on_time_rate}%` : '—';
   }
-
-  async function runAll() {
-    log('=== Running all endpoints ===', 'info');
-    for (let i = 0; i < endpoints.length; i++) {
-      await runEndpoint(i);
-      await new Promise((r) => setTimeout(r, 200));
-    }
-    log('=== Done ===', 'success');
-  }
-
-  async function checkHealth() {
-    try {
-      const r = await fetch(`${API}/health`);
-      const data = await r.json();
-      const badge = document.getElementById('healthBadge');
-      if (r.ok && data.status === 'healthy') {
-        badge.innerHTML = `<div class="w-1.5 h-1.5 rounded-full bg-[#61C454] pulse-dot"></div><span class="text-[11px] text-[#5A9E7A] font-medium">Healthy · ${Math.round(data.uptime)}s uptime</span>`;
-      } else {
-        badge.innerHTML = `<div class="w-1.5 h-1.5 rounded-full bg-[#E86A5F]"></div><span class="text-[11px] text-[#E86A5F]">Down</span>`;
-      }
-    } catch {
-      const badge = document.getElementById('healthBadge');
-      badge.innerHTML = `<div class="w-1.5 h-1.5 rounded-full bg-[#E86A5F]"></div><span class="text-[11px] text-[#E86A5F]">Unreachable</span>`;
-    }
-  }
-
-  renderEndpoints();
-  checkHealth();
-  setInterval(checkHealth, 30000);
   </script>
 </body>
 </html>
