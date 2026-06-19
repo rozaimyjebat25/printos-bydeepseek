@@ -3,327 +3,468 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PRINT OS API — Test Dashboard</title>
+  <title>PRINT OS — Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; }
-    pre { font-family: ui-monospace, SFMono-Regular, monospace; }
-    .endpoint { transition: all 0.2s; }
-    .endpoint:hover { transform: translateY(-1px); }
+    :root {
+      --cream: #F8F4F0;
+      --cream-dark: #EDE6DE;
+      --gold: #C4956A;
+      --gold-light: #E8D5C0;
+      --gold-dark: #A67B54;
+      --warm-dark: #2D2A24;
+      --warm-gray: #8B7D72;
+      --warm-border: #E8E0D6;
+      --card-shadow: 0 2px 16px rgba(45, 42, 36, 0.06);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--warm-dark);
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, .serif { font-family: 'DM Serif Display', Georgia, serif; }
+    pre, code, .mono { font-family: 'SF Mono', 'JetBrains Mono', ui-monospace, monospace; }
+    ::selection { background: var(--gold-light); color: var(--warm-dark); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--warm-border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold-light); }
+
+    .endpoint-card {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--warm-border);
+    }
+    .endpoint-card:hover {
+      border-color: var(--gold-light);
+      box-shadow: 0 4px 20px rgba(196, 149, 106, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .role-chip {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1.5px solid var(--warm-border);
+      cursor: pointer;
+    }
+    .role-chip:hover {
+      border-color: var(--gold);
+      background: white;
+      box-shadow: 0 4px 16px rgba(196, 149, 106, 0.15);
+      transform: translateY(-2px);
+    }
+    .role-chip.active {
+      border-color: var(--gold);
+      background: white;
+      box-shadow: 0 2px 12px rgba(196, 149, 106, 0.2);
+    }
+
+    .premium-input {
+      border: 1.5px solid var(--warm-border);
+      transition: all 0.2s;
+      background: white;
+    }
+    .premium-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(196, 149, 106, 0.12);
+      outline: none;
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: white;
+      transition: all 0.25s;
+      font-weight: 500;
+    }
+    .btn-gold:hover {
+      background: var(--gold-dark);
+      box-shadow: 0 4px 16px rgba(196, 149, 106, 0.3);
+      transform: translateY(-1px);
+    }
+    .btn-gold:active { transform: translateY(0); }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1.5px solid var(--warm-border);
+      color: var(--warm-gray);
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover {
+      border-color: var(--gold);
+      color: var(--gold-dark);
+      background: rgba(196, 149, 106, 0.05);
+    }
+
+    .console-line { animation: fadeIn 0.2s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .pulse-dot { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .card {
+      background: white;
+      border: 1px solid var(--warm-border);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+    }
+
+    @media (max-width: 640px) {
+      .card { border-radius: 16px; }
+    }
   </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body>
 
   <!-- Header -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+  <header class="sticky top-0 z-20 backdrop-blur-xl bg-[#F8F4F0]/80 border-b border-[#E8E0D6]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">P</div>
+        <div class="w-9 h-9 bg-[#C4956A] rounded-xl flex items-center justify-center shadow-sm">
+          <span class="text-white font-serif text-lg font-bold italic">P</span>
+        </div>
         <div>
-          <h1 class="text-lg font-bold text-slate-900">PRINT OS API</h1>
-          <p class="text-xs text-slate-500">Test Dashboard v1.0</p>
+          <h1 class="text-base font-semibold text-[#2D2A24] tracking-tight">PRINT OS</h1>
+          <p class="text-[10px] text-[#8B7D72] tracking-wider uppercase">Test Dashboard</p>
         </div>
       </div>
-      <div id="healthBadge" class="flex items-center gap-2">
-        <div class="w-2 h-2 bg-slate-300 rounded-full"></div>
-        <span class="text-xs text-slate-600">Checking...</span>
+      <div id="healthBadge" class="flex items-center gap-2.5 px-3 py-1.5 bg-white/60 rounded-full border border-[#E8E0D6]">
+        <div class="w-1.5 h-1.5 rounded-full bg-[#8B7D72]"></div>
+        <span class="text-[11px] text-[#8B7D72] font-medium">Checking...</span>
       </div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-6 py-8 space-y-6">
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
     <!-- Auth Section -->
-    <section class="bg-white border border-slate-200 rounded-2xl p-6">
-      <h2 class="text-lg font-bold text-slate-900 mb-4">🔐 Authentication</h2>
+    <section class="card p-5 sm:p-7">
+      <div class="flex items-center gap-2 mb-5">
+        <span class="text-lg">🔐</span>
+        <h2 class="text-lg serif text-[#2D2A24]">Authentication</h2>
+      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">Email</label>
-          <input id="email" type="email" value="owner@srcreative.my" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" />
+          <label class="block text-xs font-medium text-[#8B7D72] mb-1.5 tracking-wide uppercase">Email</label>
+          <input id="email" type="email" value="owner@srcreative.my" class="premium-input w-full px-3.5 py-2.5 rounded-xl text-sm text-[#2D2A24] placeholder-[#8B7D72]/50" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-700 mb-1">Password</label>
-          <input id="password" type="password" value="PrintOS2026!" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" />
+          <label class="block text-xs font-medium text-[#8B7D72] mb-1.5 tracking-wide uppercase">Password</label>
+          <input id="password" type="password" value="PrintOS2026!" class="premium-input w-full px-3.5 py-2.5 rounded-xl text-sm text-[#2D2A24]" />
         </div>
       </div>
 
-      <button onclick="signIn()" id="signInBtn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg">
-        Sign In
-      </button>
-      <button onclick="signOut()" id="signOutBtn" class="hidden px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-medium rounded-lg ml-2">
-        Sign Out
-      </button>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="signIn()" id="signInBtn" class="btn-gold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+          Sign In
+        </button>
+        <button onclick="signOut()" id="signOutBtn" class="hidden btn-ghost px-5 py-2.5 rounded-xl text-sm">
+          Sign Out
+        </button>
+      </div>
 
       <div id="authStatus" class="mt-4 hidden">
-        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-emerald-700 font-semibold">✓ Signed in as</span>
-            <span id="userEmail" class="text-emerald-900 font-mono text-xs"></span>
+        <div class="p-4 bg-[#F0F7F4] border border-[#C8E0D0] rounded-xl">
+          <div class="flex items-center gap-2 mb-1.5">
+            <svg class="w-4 h-4 text-[#5A9E7A]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            <span class="text-sm font-semibold text-[#2D5A3E]">Signed in as</span>
+            <span id="userEmail" class="text-xs font-mono text-[#2D5A3E]/80"></span>
           </div>
-          <div class="text-xs text-emerald-700">
-            Role: <span id="userRole" class="font-mono font-semibold"></span> · Company: <span id="userCompany" class="font-mono"></span>
+          <div class="text-xs text-[#2D5A3E]/70 flex flex-wrap gap-x-4 gap-y-1">
+            <span>Role: <span id="userRole" class="font-mono font-semibold"></span></span>
+            <span>Company: <span id="userCompany" class="font-mono"></span></span>
           </div>
         </div>
       </div>
 
       <div id="authError" class="mt-4 hidden">
-        <div class="p-3 bg-rose-50 border border-rose-200 rounded-lg text-sm text-rose-700"></div>
+        <div class="p-4 bg-[#FDF0EE] border border-[#E8C8C0] rounded-xl text-sm text-[#8B4A3E]"></div>
       </div>
     </section>
 
     <!-- Quick Role Switcher -->
-    <section class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-6">
-      <h2 class="text-lg font-bold text-slate-900 mb-2">⚡ Quick Role Switcher</h2>
-      <p class="text-xs text-slate-600 mb-4">Test RBAC filtering — login as different roles untuk tengok perbezaan data (especially cost/profit visibility).</p>
+    <section class="card p-5 sm:p-7">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-lg">⚡</span>
+        <h2 class="text-lg serif text-[#2D2A24]">Quick Role Switcher</h2>
+      </div>
+      <p class="text-sm text-[#8B7D72] mb-5">Test RBAC filtering — each role sees different data based on permissions</p>
 
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="roleSwitcher">
-        <button data-role="owner" data-email="owner@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
-          <div class="text-sm font-semibold text-slate-900">👑 Owner</div>
-          <div class="text-xs text-slate-500">Akses penuh + nampak cost</div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5" id="roleSwitcher">
+        <button data-role="owner" data-email="owner@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
+          <div class="text-lg mb-0.5">👑</div>
+          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Owner</div>
+          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Full access</div>
         </button>
-        <button data-role="sales" data-email="sales@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
-          <div class="text-sm font-semibold text-slate-900">💼 Sales Executive</div>
-          <div class="text-xs text-slate-500">CRM + Quotation (no cost)</div>
+        <button data-role="management" data-email="management@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
+          <div class="text-lg mb-0.5">📊</div>
+          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Management</div>
+          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Operations</div>
         </button>
-        <button data-role="designer" data-email="designer@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
-          <div class="text-sm font-semibold text-slate-900">🎨 Designer</div>
-          <div class="text-xs text-slate-500">Artwork only</div>
+        <button data-role="sales" data-email="sales@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
+          <div class="text-lg mb-0.5">💼</div>
+          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Sales</div>
+          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">CRM + Quote</div>
         </button>
-        <button data-role="production" data-email="production@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
-          <div class="text-sm font-semibold text-slate-900">🏭 Production</div>
-          <div class="text-xs text-slate-500">Job queue (no cost)</div>
+        <button data-role="designer" data-email="designer@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
+          <div class="text-lg mb-0.5">🎨</div>
+          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Designer</div>
+          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Artwork</div>
         </button>
-        <button data-role="finance" data-email="finance@srcreative.my" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
-          <div class="text-sm font-semibold text-slate-900">💰 Finance</div>
-          <div class="text-xs text-slate-500">Invoice + Payment + Profit</div>
+        <button data-role="production" data-email="production@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
+          <div class="text-lg mb-0.5">🏭</div>
+          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Production</div>
+          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Job Queue</div>
         </button>
-        <button data-role="customer" data-email="customer@example.com" class="role-btn px-3 py-2 bg-white border border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 rounded-lg text-left transition-colors">
-          <div class="text-sm font-semibold text-slate-900">🛒 Customer</div>
-          <div class="text-xs text-slate-500">Portal — order sendiri</div>
+        <button data-role="finance" data-email="finance@srcreative.my" class="role-chip px-3 py-3 rounded-xl bg-[#F8F4F0]">
+          <div class="text-lg mb-0.5">💰</div>
+          <div class="text-[13px] font-semibold text-[#2D2A24] leading-tight">Finance</div>
+          <div class="text-[10px] text-[#8B7D72] leading-tight mt-0.5">Invoices</div>
         </button>
+      </div>
+
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#F0F7F4] text-[#5A9E7A] text-[10px] font-medium rounded-full">👑 Owner sees cost ✓</span>
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFF8F0] text-[#C4956A] text-[10px] font-medium rounded-full">💼 Sales cost hidden 🔒</span>
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFF8F0] text-[#C4956A] text-[10px] font-medium rounded-full">🎨 Designer cost hidden 🔒</span>
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFF8F0] text-[#C4956A] text-[10px] font-medium rounded-full">🏭 Production cost hidden 🔒</span>
       </div>
     </section>
 
     <!-- Test Endpoints -->
-    <section class="bg-white border border-slate-200 rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-bold text-slate-900">🧪 Test Endpoints</h2>
-        <button onclick="runAll()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg">
+    <section class="card p-5 sm:p-7">
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🧪</span>
+          <h2 class="text-lg serif text-[#2D2A24]">Test Endpoints</h2>
+        </div>
+        <button onclick="runAll()" class="btn-gold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           Run All
         </button>
       </div>
 
-      <div class="space-y-3" id="endpointsList">
-        <!-- populated by JS -->
-      </div>
+      <div class="space-y-2" id="endpointsList"></div>
     </section>
 
     <!-- Output Console -->
-    <section class="bg-slate-900 text-slate-100 rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-bold">📋 Output Console</h2>
-        <button onclick="clearConsole()" class="text-xs text-slate-400 hover:text-white">Clear</button>
+    <section class="rounded-2xl overflow-hidden border border-[#E8E0D6] bg-[#1A1816] shadow-xl">
+      <div class="flex items-center justify-between px-5 py-3.5 bg-[#2D2A24] border-b border-[#3D3A34]">
+        <div class="flex items-center gap-3">
+          <div class="flex gap-1.5">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#E86A5F]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#F4BD4E]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#61C454]"></div>
+          </div>
+          <span class="text-[11px] text-[#8B7D72] font-mono">console.log</span>
+        </div>
+        <button onclick="clearConsole()" class="text-[10px] text-[#8B7D72] hover:text-[#E8E0D6] transition-colors tracking-wider uppercase">Clear</button>
       </div>
-      <pre id="console" class="text-xs leading-relaxed max-h-96 overflow-y-auto whitespace-pre-wrap break-all"></pre>
+      <pre id="console" class="text-[12px] leading-relaxed p-5 max-h-80 overflow-y-auto whitespace-pre-wrap break-all font-mono"></pre>
     </section>
 
   </main>
 
   <script>
-  const API = '';  // same origin
-  const SUPABASE_URL = 'https://ddvytkgskhegfjytwpqz.supabase.co';  // for display only — no API call uses anon key
-
+  const API = '';
   let session = null;
 
-    const endpoints = [
-      { name: 'Root Info', method: 'GET', path: '/', auth: false },
-      { name: 'Health Check', method: 'GET', path: '/health', auth: false },
-      { name: 'List Quotations', method: 'GET', path: '/api/v1/quotations', auth: true },
-      { name: 'Get Quotation #1', method: 'GET', path: '/api/v1/quotations/00000000-0000-0000-0000-000000000040', auth: true },
-      { name: 'List Sales Orders', method: 'GET', path: '/api/v1/sales-orders', auth: true },
-      { name: 'List Production Jobs', method: 'GET', path: '/api/v1/production/jobs', auth: true },
-      { name: 'Production Bottlenecks', method: 'GET', path: '/api/v1/production/bottlenecks', auth: true },
-      { name: 'Owner Dashboard', method: 'GET', path: '/api/v1/dashboard/owner', auth: true },
-      { name: 'Repeat Order Predictions', method: 'GET', path: '/api/v1/dashboard/repeat-predictions', auth: true },
-      { name: 'List Customers', method: 'GET', path: '/api/v1/customers', auth: true },
-      { name: 'Revenue Trend (30 days)', method: 'GET', path: '/api/v1/dashboard/revenue-trend?start=2026-05-17T00:00:00Z&end=2026-06-17T00:00:00Z', auth: true },
-    ];
+  const endpoints = [
+    { name: 'Root Info', method: 'GET', path: '/', auth: false },
+    { name: 'Health Check', method: 'GET', path: '/health', auth: false },
+    { name: 'List Quotations', method: 'GET', path: '/api/v1/quotations', auth: true },
+    { name: 'Get Quotation', method: 'GET', path: '/api/v1/quotations/00000000-0000-0000-0000-000000000040', auth: true },
+    { name: 'List Sales Orders', method: 'GET', path: '/api/v1/sales-orders', auth: true },
+    { name: 'List Production Jobs', method: 'GET', path: '/api/v1/production/jobs', auth: true },
+    { name: 'Production Bottlenecks', method: 'GET', path: '/api/v1/production/bottlenecks', auth: true },
+    { name: 'Owner Dashboard', method: 'GET', path: '/api/v1/dashboard/owner', auth: true },
+    { name: 'Repeat Order Predictions', method: 'GET', path: '/api/v1/dashboard/repeat-predictions', auth: true },
+    { name: 'List Customers', method: 'GET', path: '/api/v1/customers', auth: true },
+    { name: 'Revenue Trend', method: 'GET', path: '/api/v1/dashboard/revenue-trend?start=2026-05-17T00:00:00Z&end=2026-06-17T00:00:00Z', auth: true },
+  ];
 
-    function log(msg, type = 'info') {
-      const c = document.getElementById('console');
-      const time = new Date().toLocaleTimeString();
-      const colors = {
-        info: 'text-slate-300',
-        success: 'text-emerald-400',
-        error: 'text-rose-400',
-        warn: 'text-amber-400',
-        request: 'text-sky-400',
-      };
-      c.innerHTML += `<span class="${colors[type]}">[${time}] ${msg}\n</span>`;
-      c.scrollTop = c.scrollHeight;
-    }
+  function log(msg, type = 'info') {
+    const c = document.getElementById('console');
+    const time = new Date().toLocaleTimeString();
+    const colors = {
+      info: 'text-[#C4B5A0]',
+      success: 'text-[#61C454]',
+      error: 'text-[#E86A5F]',
+      warn: 'text-[#F4BD4E]',
+      request: 'text-[#7AB8E0]',
+    };
+    c.innerHTML += `<span class="${colors[type]}"><span class="text-[#5A554F]">[${time}]</span> ${msg}</span>\n`;
+    c.scrollTop = c.scrollHeight;
+  }
 
-    function clearConsole() {
-      document.getElementById('console').innerHTML = '';
-    }
+  function clearConsole() {
+    document.getElementById('console').innerHTML = '';
+  }
 
-    function renderEndpoints() {
-      const list = document.getElementById('endpointsList');
-      list.innerHTML = endpoints.map((e, i) => `
-        <div class="endpoint flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50" id="ep-${i}">
-          <div class="flex items-center gap-3">
-            <span class="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs font-mono rounded">${e.method}</span>
-            <span class="text-sm font-mono text-slate-700">${e.path}</span>
-            ${e.auth ? '<span class="text-xs text-amber-600">🔒 auth</span>' : '<span class="text-xs text-slate-400">public</span>'}
-          </div>
-          <div class="flex items-center gap-3">
-            <span id="ep-status-${i}" class="text-xs text-slate-400">—</span>
-            <button onclick="runEndpoint(${i})" class="px-3 py-1 bg-slate-900 hover:bg-slate-700 text-white text-xs font-medium rounded">
-              Run
-            </button>
-          </div>
+  function renderEndpoints() {
+    const list = document.getElementById('endpointsList');
+    list.innerHTML = endpoints.map((e, i) => `
+      <div class="endpoint-card flex items-center justify-between p-3.5 rounded-xl bg-white" id="ep-${i}">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="px-2 py-0.5 bg-[#F8F4F0] text-[#8B7D72] text-[10px] font-mono font-semibold rounded-md shrink-0">${e.method}</span>
+          <span class="text-[13px] font-mono text-[#2D2A24] truncate">${e.path}</span>
+          ${e.auth ? '<span class="text-[10px] text-[#C4956A] shrink-0">🔒</span>' : '<span class="text-[10px] text-[#8B7D72] shrink-0">🌐</span>'}
         </div>
-      `).join('');
-    }
+        <div class="flex items-center gap-3 shrink-0 ml-3">
+          <span id="ep-status-${i}" class="text-[11px] text-[#8B7D72] font-medium">—</span>
+          <button onclick="runEndpoint(${i})" class="px-3 py-1.5 bg-[#2D2A24] hover:bg-[#3D3A34] text-white text-[11px] font-medium rounded-lg transition-colors">
+            Run
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
 
-    async function signIn() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const errBox = document.getElementById('authError');
-      errBox.classList.add('hidden');
+  async function signIn() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const errBox = document.getElementById('authError');
+    errBox.classList.add('hidden');
 
-      log(`Signing in as ${email}...`, 'request');
+    log(`Signing in as ${email}...`, 'request');
 
-      try {
-        // Call our API's auth verify endpoint
-        const r = await fetch(`${API}/api/v1/auth/verify-password`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
-
-        const data = await r.json();
-
-        if (!r.ok) {
-          log(`Sign in failed: ${data.error || data.detail || 'Unknown error'}`, 'error');
-          errBox.classList.remove('hidden');
-          errBox.querySelector('div').textContent = data.error || data.detail || 'Sign in failed';
-          return;
-        }
-
-        session = { access_token: data.access_token, refresh_token: data.refresh_token, user: data.user };
-        log(`✓ Signed in successfully`, 'success');
-        log(`User: ${data.user.email}`, 'info');
-        log(`Role: ${data.user.role}`, 'info');
-        log(`Company: ${data.user.company_id}`, 'info');
-
-        document.getElementById('signInBtn').classList.add('hidden');
-        document.getElementById('signOutBtn').classList.remove('hidden');
-        document.getElementById('authStatus').classList.remove('hidden');
-        document.getElementById('userEmail').textContent = data.user.email;
-        document.getElementById('userRole').textContent = data.user.role || 'unknown';
-        document.getElementById('userCompany').textContent = data.user.company_id || 'unknown';
-      } catch (e) {
-        log(`Network error: ${e.message}`, 'error');
-      }
-    }
-
-    function signOut() {
-      session = null;
-      document.getElementById('signInBtn').classList.remove('hidden');
-      document.getElementById('signOutBtn').classList.add('hidden');
-      document.getElementById('authStatus').classList.add('hidden');
-      document.getElementById('password').value = 'PrintOS2026!';
-      log('Signed out', 'warn');
-    }
-
-    // Role Switcher
-    document.querySelectorAll('.role-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const email = btn.getAttribute('data-email');
-        const role = btn.getAttribute('data-role');
-        document.getElementById('email').value = email;
-        document.getElementById('password').value = 'PrintOS2026!';
-        log(`→ Switching to ${role} (${email})`, 'request');
-        signIn();
+    try {
+      const r = await fetch(`${API}/api/v1/auth/verify-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
+
+      const data = await r.json();
+
+      if (!r.ok) {
+        log(`Sign in failed: ${data.error || data.detail || 'Unknown error'}`, 'error');
+        errBox.classList.remove('hidden');
+        errBox.querySelector('div').textContent = data.error || data.detail || 'Sign in failed';
+        return;
+      }
+
+      session = { access_token: data.access_token, refresh_token: data.refresh_token, user: data.user };
+      log(`Signed in as ${data.user.email}`, 'success');
+      log(`Role: ${data.user.role} | Company: ${data.user.company_id}`, 'info');
+
+      document.getElementById('signInBtn').classList.add('hidden');
+      document.getElementById('signOutBtn').classList.remove('hidden');
+      document.getElementById('authStatus').classList.remove('hidden');
+      document.getElementById('userEmail').textContent = data.user.email;
+      document.getElementById('userRole').textContent = data.user.role || 'unknown';
+      document.getElementById('userCompany').textContent = data.user.company_id || 'unknown';
+
+      // Active role chip
+      document.querySelectorAll('.role-chip').forEach((c) => {
+        c.classList.toggle('active', c.getAttribute('data-email') === email);
+      });
+    } catch (e) {
+      log(`Network error: ${e.message}`, 'error');
+    }
+  }
+
+  function signOut() {
+    session = null;
+    document.getElementById('signInBtn').classList.remove('hidden');
+    document.getElementById('signOutBtn').classList.add('hidden');
+    document.getElementById('authStatus').classList.add('hidden');
+    document.getElementById('password').value = 'PrintOS2026!';
+    document.querySelectorAll('.role-chip').forEach((c) => c.classList.remove('active'));
+    log('Signed out', 'warn');
+  }
+
+  document.querySelectorAll('.role-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const email = btn.getAttribute('data-email');
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = 'PrintOS2026!';
+      log(`→ Switching to ${btn.getAttribute('data-role')}`, 'request');
+      signIn();
     });
+  });
 
-    async function runEndpoint(i) {
-      const e = endpoints[i];
-      const status = document.getElementById(`ep-status-${i}`);
+  async function runEndpoint(i) {
+    const e = endpoints[i];
+    const status = document.getElementById(`ep-status-${i}`);
 
-      const headers = { 'Content-Type': 'application/json' };
-      if (e.auth) {
-        if (!session) {
-          log(`✗ ${e.name}: Not signed in`, 'error');
-          status.textContent = 'no auth';
-          status.className = 'text-xs text-rose-600 font-medium';
-          return;
-        }
-        headers['Authorization'] = `Bearer ${session.access_token}`;
+    const headers = { 'Content-Type': 'application/json' };
+    if (e.auth) {
+      if (!session) {
+        log(`✗ ${e.name}: Not signed in`, 'error');
+        status.textContent = 'no auth';
+        status.style.color = '#E86A5F';
+        return;
       }
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
 
-      log(`→ ${e.method} ${e.path}`, 'request');
-      const t0 = Date.now();
+    log(`→ ${e.method} ${e.path}`, 'request');
+    const t0 = Date.now();
 
-      try {
-        const r = await fetch(`${API}${e.path}`, { method: e.method, headers });
-        const ms = Date.now() - t0;
-        let body;
-        try {
-          body = await r.json();
-        } catch {
-          body = await r.text();
-        }
+    try {
+      const r = await fetch(`${API}${e.path}`, { method: e.method, headers });
+      const ms = Date.now() - t0;
+      let body;
+      try { body = await r.json(); } catch { body = await r.text(); }
 
-        if (r.ok) {
-          log(`✓ ${e.name} [${r.status}] ${ms}ms`, 'success');
-          log(JSON.stringify(body, null, 2).substring(0, 500), 'info');
-          status.textContent = `${r.status}`;
-          status.className = 'text-xs text-emerald-600 font-medium';
+      if (r.ok) {
+        log(`✓ ${e.name} [${r.status}] ${ms}ms`, 'success');
+        if (typeof body === 'object' && body.data) {
+          if (Array.isArray(body.data)) {
+            log(`  ${body.data.length} results`, 'info');
+            log(`  First: ${JSON.stringify(body.data[0]).substring(0, 300)}`, 'info');
+          } else {
+            log(`  ${JSON.stringify(body.data).substring(0, 500)}`, 'info');
+          }
         } else {
-          log(`✗ ${e.name} [${r.status}] ${ms}ms`, 'error');
-          log(JSON.stringify(body, null, 2).substring(0, 300), 'error');
-          status.textContent = `${r.status}`;
-          status.className = 'text-xs text-rose-600 font-medium';
+          log(`  ${JSON.stringify(body).substring(0, 500)}`, 'info');
         }
-      } catch (err) {
-        log(`✗ ${e.name}: ${err.message}`, 'error');
-        status.textContent = 'fail';
-        status.className = 'text-xs text-rose-600 font-medium';
+        status.textContent = `${r.status}`;
+        status.style.color = '#61C454';
+      } else {
+        log(`✗ ${e.name} [${r.status}] ${ms}ms`, 'error');
+        log(`  ${JSON.stringify(body).substring(0, 300)}`, 'error');
+        status.textContent = `${r.status}`;
+        status.style.color = '#E86A5F';
       }
+    } catch (err) {
+      log(`✗ ${e.name}: ${err.message}`, 'error');
+      status.textContent = 'fail';
+      status.style.color = '#E86A5F';
     }
+  }
 
-    async function runAll() {
-      log('\n=== Running all endpoints ===\n', 'info');
-      for (let i = 0; i < endpoints.length; i++) {
-        await runEndpoint(i);
-        await new Promise((r) => setTimeout(r, 200));
+  async function runAll() {
+    log('=== Running all endpoints ===', 'info');
+    for (let i = 0; i < endpoints.length; i++) {
+      await runEndpoint(i);
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    log('=== Done ===', 'success');
+  }
+
+  async function checkHealth() {
+    try {
+      const r = await fetch(`${API}/health`);
+      const data = await r.json();
+      const badge = document.getElementById('healthBadge');
+      if (r.ok && data.status === 'healthy') {
+        badge.innerHTML = `<div class="w-1.5 h-1.5 rounded-full bg-[#61C454] pulse-dot"></div><span class="text-[11px] text-[#5A9E7A] font-medium">Healthy · ${Math.round(data.uptime)}s uptime</span>`;
+      } else {
+        badge.innerHTML = `<div class="w-1.5 h-1.5 rounded-full bg-[#E86A5F]"></div><span class="text-[11px] text-[#E86A5F]">Down</span>`;
       }
-      log('=== Done ===\n', 'success');
+    } catch {
+      const badge = document.getElementById('healthBadge');
+      badge.innerHTML = `<div class="w-1.5 h-1.5 rounded-full bg-[#E86A5F]"></div><span class="text-[11px] text-[#E86A5F]">Unreachable</span>`;
     }
+  }
 
-    async function checkHealth() {
-      try {
-        const r = await fetch(`${API}/health`);
-        const data = await r.json();
-        const badge = document.getElementById('healthBadge');
-        if (r.ok && data.status === 'healthy') {
-          badge.innerHTML = `<div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div><span class="text-xs text-emerald-700 font-medium">Healthy · ${Math.round(data.uptime)}s uptime</span>`;
-        } else {
-          badge.innerHTML = `<div class="w-2 h-2 bg-rose-500 rounded-full"></div><span class="text-xs text-rose-700">Down</span>`;
-        }
-      } catch (e) {
-        const badge = document.getElementById('healthBadge');
-        badge.innerHTML = `<div class="w-2 h-2 bg-rose-500 rounded-full"></div><span class="text-xs text-rose-700">Unreachable</span>`;
-      }
-    }
-
-    renderEndpoints();
-    checkHealth();
-    setInterval(checkHealth, 30000);
+  renderEndpoints();
+  checkHealth();
+  setInterval(checkHealth, 30000);
   </script>
 </body>
 </html>

@@ -1,11 +1,16 @@
-// =====================================================================
-// PRINT OS — Login Page (Updated dengan Demo Credentials)
-// Drop-in untuk Replit App.tsx
-// =====================================================================
-
 import React, { useState } from 'react';
 import { useAuth } from '../context/PrintOSContext';
-import { LogIn, User, Lock, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
+import { LogIn, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
+
+const roles = [
+  { role: 'Owner', email: 'owner@srcreative.my', desc: 'Full access · sees cost & profit', icon: '👑', color: '#C4956A' },
+  { role: 'Management', email: 'management@srcreative.my', desc: 'Operations · sees cost & margin', icon: '📊', color: '#7A8B99' },
+  { role: 'Sales Executive', email: 'sales@srcreative.my', desc: 'CRM + Quotation · cost hidden', icon: '💼', color: '#8B7D72' },
+  { role: 'Designer', email: 'designer@srcreative.my', desc: 'Artwork only · no finance', icon: '🎨', color: '#C49A8B' },
+  { role: 'Production', email: 'production@srcreative.my', desc: 'Job queue + QC · no cost', icon: '🏭', color: '#9AAF8B' },
+  { role: 'Finance', email: 'finance@srcreative.my', desc: 'Invoice + Payment + Reports', icon: '💰', color: '#7A9E7A' },
+  { role: 'Customer', email: 'customer@example.com', desc: 'Portal · own orders only', icon: '🛒', color: '#8B8B8B' },
+];
 
 export function LoginPage() {
   const { signIn, loading: authLoading } = useAuth();
@@ -15,6 +20,7 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [showCredentials, setShowCredentials] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
+  const [activeRole, setActiveRole] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +38,7 @@ export function LoginPage() {
   const quickLogin = (loginEmail: string) => {
     setEmail(loginEmail);
     setPassword('PrintOS2026!');
+    setActiveRole(loginEmail);
   };
 
   const copyToClipboard = (text: string, label: string) => {
@@ -42,75 +49,130 @@ export function LoginPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-slate-500">Loading...</div>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8F4F0' }}>
+        <div style={{ color: '#8B7D72', fontFamily: 'serif', fontSize: '1.125rem' }}>Loading...</div>
       </div>
     );
   }
 
-  // 6 MVP demo credentials
-  const demoCredentials = [
-    { role: 'Owner', email: 'owner@srcreative.my', desc: 'Full access · sees cost & profit', icon: '👑', color: 'amber' },
-    { role: 'Management', email: 'management@srcreative.my', desc: 'All operations · sees cost & margin', icon: '📊', color: 'sky' },
-    { role: 'Sales Executive', email: 'sales@srcreative.my', desc: 'CRM + Quotation · no cost visibility', icon: '💼', color: 'indigo' },
-    { role: 'Designer', email: 'designer@srcreative.my', desc: 'Artwork only · no finance', icon: '🎨', color: 'pink' },
-    { role: 'Production', email: 'production@srcreative.my', desc: 'Job queue + QC · no cost', icon: '🏭', color: 'emerald' },
-    { role: 'Finance', email: 'finance@srcreative.my', desc: 'Invoice + Payment + Reports', icon: '💰', color: 'green' },
-    { role: 'Customer', email: 'customer@example.com', desc: 'Portal · own orders only', icon: '🛒', color: 'slate' },
-  ];
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
-      <div className="w-full max-w-md">
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(135deg, #F8F4F0 0%, #EDE6DE 50%, #E8E0D6 100%)',
+      padding: '16px',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    }}>
+      <div style={{ width: '100%', maxWidth: '420px' }}>
+
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl text-white text-2xl font-bold mb-4 shadow-lg">
-            P
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{
+            width: '56px',
+            height: '56px',
+            background: 'linear-gradient(135deg, #C4956A, #A67B54)',
+            borderRadius: '16px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px',
+            boxShadow: '0 4px 20px rgba(196, 149, 106, 0.25)',
+          }}>
+            <span style={{ color: 'white', fontSize: '28px', fontWeight: 700, fontFamily: "'DM Serif Display', Georgia, serif", fontStyle: 'italic' }}>P</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">PRINT OS</h1>
-          <p className="text-slate-500 mt-1">SR Creative Sdn Bhd</p>
+          <h1 style={{
+            fontSize: '28px',
+            fontWeight: 600,
+            color: '#2D2A24',
+            fontFamily: "'DM Serif Display', Georgia, serif",
+            letterSpacing: '-0.02em',
+            margin: 0,
+          }}>PRINT OS</h1>
+          <p style={{ color: '#8B7D72', fontSize: '13px', marginTop: '4px' }}>SR Creative Sdn Bhd</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-          <div className="mb-5">
-            <h2 className="text-xl font-bold text-slate-900">Welcome back</h2>
-            <p className="text-sm text-slate-500">Enter your staff credentials to continue</p>
+        <div style={{
+          background: 'white',
+          borderRadius: '20px',
+          border: '1px solid #E8E0D6',
+          boxShadow: '0 2px 16px rgba(45, 42, 36, 0.06)',
+          padding: '28px',
+        }}>
+          <div style={{ marginBottom: '24px' }}>
+            <h2 style={{
+              fontSize: '20px',
+              fontWeight: 600,
+              color: '#2D2A24',
+              fontFamily: "'DM Serif Display', Georgia, serif",
+              margin: '0 0 4px',
+            }}>Welcome back</h2>
+            <p style={{ fontSize: '13px', color: '#8B7D72', margin: 0 }}>Enter your staff credentials</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#8B7D72', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email</label>
+              <div style={{ position: 'relative' }}>
+                <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', color: '#C4B5A0' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px 10px 36px',
+                    border: '1.5px solid #E8E0D6',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    color: '#2D2A24',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                  }}
+                  onFocus={(e) => { e.target.style.borderColor = '#C4956A'; e.target.style.boxShadow = '0 0 0 3px rgba(196,149,106,0.12)'; }}
+                  onBlur={(e) => { e.target.style.borderColor = '#E8E0D6'; e.target.style.boxShadow = 'none'; }}
                   placeholder="you@company.com"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#8B7D72', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', color: '#C4B5A0' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px 10px 36px',
+                    border: '1.5px solid #E8E0D6',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    color: '#2D2A24',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                  }}
+                  onFocus={(e) => { e.target.style.borderColor = '#C4956A'; e.target.style.boxShadow = '0 0 0 3px rgba(196,149,106,0.12)'; }}
+                  onBlur={(e) => { e.target.style.borderColor = '#E8E0D6'; e.target.style.boxShadow = 'none'; }}
                   placeholder="••••••••"
                 />
               </div>
             </div>
 
             {error && (
-              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-lg">
+              <div style={{ padding: '12px', background: '#FDF0EE', border: '1px solid #E8C8C0', borderRadius: '12px', color: '#8B4A3E', fontSize: '13px' }}>
                 {error}
               </div>
             )}
@@ -118,72 +180,130 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              style={{
+                width: '100%',
+                padding: '11px',
+                background: loading ? '#C4B5A0' : 'linear-gradient(135deg, #C4956A, #A67B54)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '14px',
+                fontWeight: 500,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'all 0.25s',
+                boxShadow: '0 4px 16px rgba(196, 149, 106, 0.25)',
+              }}
+              onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(196, 149, 106, 0.35)'; } }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(196, 149, 106, 0.25)'; }}
             >
-              {loading ? (
-                'Signing in...'
-              ) : (
-                <>
-                  <LogIn className="w-4 h-4" />
-                  Sign In
-                </>
-              )}
+              <LogIn size={16} />
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
         </div>
 
-        {/* Demo Credentials Section */}
-        <div className="mt-4 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        {/* Demo Credentials */}
+        <div style={{
+          marginTop: '12px',
+          background: 'white',
+          borderRadius: '20px',
+          border: '1px solid #E8E0D6',
+          boxShadow: '0 2px 16px rgba(45, 42, 36, 0.06)',
+          overflow: 'hidden',
+        }}>
           <button
             onClick={() => setShowCredentials(!showCredentials)}
-            className="w-full px-6 py-3 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
+            style={{
+              width: '100%',
+              padding: '16px 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#F8F4F0'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
           >
             <div>
-              <div className="text-sm font-semibold text-slate-900">View Demo Credentials</div>
-              <div className="text-xs text-slate-500">Click any role to quick-login (password: PrintOS2026!)</div>
+              <div style={{ fontSize: '14px', fontWeight: 600, color: '#2D2A24' }}>Demo Credentials</div>
+              <div style={{ fontSize: '11px', color: '#8B7D72', marginTop: '1px' }}>Tap any role to quick-login</div>
             </div>
-            {showCredentials ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+            {showCredentials ? <ChevronUp size={16} color="#C4B5A0" /> : <ChevronDown size={16} color="#C4B5A0" />}
           </button>
 
           {showCredentials && (
-            <div className="border-t border-slate-200 p-3 space-y-1.5 max-h-96 overflow-y-auto">
-              {demoCredentials.map((cred) => (
+            <div style={{ borderTop: '1px solid #E8E0D6', padding: '8px 12px 12px', maxHeight: '340px', overflowY: 'auto' }}>
+              {roles.map((cred) => (
                 <button
                   key={cred.email}
                   onClick={() => quickLogin(cred.email)}
-                  className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors text-left group"
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '10px',
+                    border: activeRole === cred.email ? '1.5px solid #C4956A' : '1.5px solid transparent',
+                    borderRadius: '14px',
+                    background: activeRole === cred.email ? '#F8F4F0' : 'transparent',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                    marginBottom: '4px',
+                  }}
+                  onMouseEnter={(e) => { if (activeRole !== cred.email) { e.currentTarget.style.background = '#F8F4F0'; } }}
+                  onMouseLeave={(e) => { if (activeRole !== cred.email) { e.currentTarget.style.background = 'transparent'; } }}
                 >
-                  <div className="text-2xl">{cred.icon}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-slate-900">{cred.role}</div>
-                    <div className="text-xs text-slate-500 truncate">{cred.email}</div>
-                    <div className="text-xs text-slate-400">{cred.desc}</div>
+                  <span style={{ fontSize: '22px' }}>{cred.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#2D2A24' }}>{cred.role}</div>
+                    <div style={{ fontSize: '11px', color: '#8B7D72', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cred.email}</div>
+                    <div style={{ fontSize: '10px', color: '#C4B5A0' }}>{cred.desc}</div>
                   </div>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       copyToClipboard(cred.email, cred.email);
                     }}
-                    className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-slate-200 rounded transition-all"
-                    title="Copy email"
+                    style={{
+                      padding: '6px',
+                      border: 'none',
+                      background: 'transparent',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      opacity: 0,
+                      transition: 'opacity 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    className="copy-btn"
+                    onMouseEnter={(e) => { e.currentTarget.style.background = '#E8E0D6'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                   >
-                    {copiedEmail === cred.email ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5 text-slate-500" />
-                    )}
+                    {copiedEmail === cred.email ? <Check size={13} color="#5A9E7A" /> : <Copy size={13} color="#8B7D72" />}
                   </button>
                 </button>
               ))}
-              <div className="pt-2 mt-2 border-t border-slate-100 text-xs text-slate-500 px-2">
-                💡 Default password: <code className="px-1.5 py-0.5 bg-slate-100 rounded font-mono text-slate-700">PrintOS2026!</code>
+              <div style={{ padding: '10px 4px 4px', borderTop: '1px solid #F0EBE5', marginTop: '2px', fontSize: '11px', color: '#8B7D72', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>💡</span>
+                <span>Default password:</span>
+                <code style={{ padding: '2px 8px', background: '#F8F4F0', borderRadius: '6px', fontSize: '11px', color: '#2D2A24', fontFamily: 'monospace' }}>PrintOS2026!</code>
               </div>
             </div>
           )}
         </div>
 
-        <p className="text-center text-xs text-slate-400 mt-6">
-          PRINT OS V1.0 · Multi-tenant SaaS for Printing Industry
+        <p style={{ textAlign: 'center', fontSize: '10px', color: '#C4B5A0', marginTop: '20px', letterSpacing: '0.05em' }}>
+          PRINT OS V1.0 — Multi-tenant SaaS for Printing Industry
         </p>
       </div>
     </div>
